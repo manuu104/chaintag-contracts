@@ -170,15 +170,6 @@ warranty activation, reward points, and frontend summary function.
 
 ---
 
-## Team
-
-Built for **Base Batches 003 — Student Track**
-
-- **Manuel** — Smart Contract Developer
-- **Grace** — Frontend Developer
-
----
-
 ## License
 
 MIT

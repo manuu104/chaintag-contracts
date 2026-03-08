@@ -16,42 +16,32 @@ contract VerificationLog {
 
     struct ScanEvent {
         uint256 tokenId;
-        address scanner;        // wallet that scanned (consumer)
+        address scanner;      
         uint256 scannedAt;
-        string location;        // optional: "Manila, PH" or GPS coords
-        bool isAuthentic;       // result at time of scan
+        string location;        
+        bool isAuthentic;      
     }
 
     struct WarrantyInfo {
         uint256 tokenId;
-        address owner;          // wallet that activated warranty
+        address owner;         
         uint256 activatedAt;
-        uint256 expiresAt;      // activatedAt + warranty duration set by brand
+        uint256 expiresAt;      
         bool isActive;
     }
 
-    // ─────────────────────────────────────────────
-    // STATE VARIABLES
-    // ─────────────────────────────────────────────
 
-    ProductRegistry public registry;    // reference to ProductRegistry contract
+    ProductRegistry public registry;  
 
-    // tokenId => array of all scan events
     mapping(uint256 => ScanEvent[]) public scanHistory;
-
-    // tokenId => warranty info
     mapping(uint256 => WarrantyInfo) public warranties;
-
-    // tokenId => reward points accumulated
     mapping(uint256 => uint256) public rewardPoints;
-
-    // brand wallet => warranty duration in seconds they offer
     mapping(address => uint256) public brandWarrantyDuration;
-
-    // scanner wallet => total points earned across all products
     mapping(address => uint256) public userTotalPoints;
 
-    // Points per scan (configurable)
+    // v2: prevents point farming — tracks if wallet already claimed points for a product
+    mapping(uint256 => mapping(address => bool)) public hasClaimedPoints;
+
     uint256 public constant POINTS_PER_SCAN = 10;
 
     // ─────────────────────────────────────────────
@@ -111,8 +101,11 @@ contract VerificationLog {
                 _activateWarranty(tokenId);
             }
 
-            // Reward the scanner with points
-            _rewardScanner(tokenId, msg.sender);
+            // v2: Only give points once per wallet per product (anti-farming)
+            if (!hasClaimedPoints[tokenId][msg.sender]) {
+                hasClaimedPoints[tokenId][msg.sender] = true;
+                _rewardScanner(tokenId, msg.sender);
+            }
         }
 
         emit ProductVerified(tokenId, msg.sender, authentic, block.timestamp);
@@ -211,6 +204,13 @@ contract VerificationLog {
      */
     function getUserPoints(address user) external view returns (uint256) {
         return userTotalPoints[user];
+    }
+
+    /**
+     * @dev Check if a wallet has already claimed points for a product
+     */
+    function hasWalletClaimed(uint256 tokenId, address wallet) external view returns (bool) {
+        return hasClaimedPoints[tokenId][wallet];
     }
 
     /**

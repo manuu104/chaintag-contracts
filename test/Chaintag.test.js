@@ -1,14 +1,8 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-// ─────────────────────────────────────────────
-// ChainTag - Full Test Suite
-// Tests for ProductRegistry.sol & VerificationLog.sol
-// ─────────────────────────────────────────────
-
 describe("ChainTag - Full Test Suite", function () {
 
-  // Shared variables across all tests
   let productRegistry;
   let verificationLog;
   let owner;        // admin / deployer
@@ -16,7 +10,7 @@ describe("ChainTag - Full Test Suite", function () {
   let consumer;     // consumer wallet (e.g. end user)
   let otherUser;    // random third party
 
-  // Reusable product data
+  // Reusable product data for testing
   const PRODUCT = {
     productName: "Air Jordan 1",
     serialNumber: "SN12345",
@@ -32,10 +26,6 @@ describe("ChainTag - Full Test Suite", function () {
     tokenType: 1,         // 1 = Soulbound
     tokenURI: "https://example.com/med.json"
   };
-
-  // ─────────────────────────────────────────────
-  // SETUP - runs before every test
-  // ─────────────────────────────────────────────
 
   beforeEach(async function () {
     // Get test wallets

@@ -1,4 +1,3 @@
-// scripts/checkProduct.js
 const hre = require("hardhat");
 
 const PRODUCT_REGISTRY_ADDRESS = "0x6D123b6718fe2018c6D643cd641Db9DB1Bf339bB";

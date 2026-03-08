@@ -1,38 +1,27 @@
 const hre = require("hardhat");
 
-// ─────────────────────────────────────────────
-// ChainTag - Mint Product & Generate QR URL
-// Run: npx hardhat run scripts/mintAndGetQR.js --network baseSepolia
-// ─────────────────────────────────────────────
-
-// ⚙️ CONFIGURE YOUR PRODUCT HERE
+// CONFIGURE YOUR PRODUCT HERE
 const PRODUCT = {
   productName: "Air Jordan 1",
-  serialNumber: "SN-DEMO-002",  // ← new serial!
+  serialNumber: "SN-DEMO-002",
   category: "Footwear",
   tokenType: 0,
   tokenURI: "https://ipfs.io/ipfs/QmPlaceholder",
 };
-
-// ⚙️ YOUR DEPLOYED CONTRACT ADDRESSES
 const PRODUCT_REGISTRY_ADDRESS = "0x6D123b6718fe2018c6D643cd641Db9DB1Bf339bB";
 const VERIFICATION_LOG_ADDRESS = "0x3eD2c8E280c2D67cCE8943441AA7cA9a2024B5dD";
 
-// ⚙️ YOUR FRONTEND URL (update when deployed)
 const FRONTEND_URL = "http://localhost:3000";
 
 async function main() {
   console.log("\n🏷️  ChainTag - Mint Product & Generate QR");
   console.log("─────────────────────────────────────────────────");
 
-  // Get signer
   const [signer] = await hre.ethers.getSigners();
   console.log("👛 Using wallet:", signer.address);
 
-  // If no recipient specified, use own wallet
   if (!PRODUCT.to) PRODUCT.to = signer.address;
 
-  // Connect to deployed ProductRegistry
   const ProductRegistry = await hre.ethers.getContractFactory("ProductRegistry");
   const registry = await hre.ethers.getContractAt(
     "ProductRegistry",
